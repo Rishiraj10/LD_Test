@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://c8l2kqlxgueyi"]
+
+[ext_resource type="Script" uid="uid://b0ayk0lnuufml" path="res://scripts/systems/sanity/sanity_controller.gd" id="1_yekc6"]
+[ext_resource type="Shader" uid="uid://lgce1ng56q17" path="res://shaders/distortion_shader.gdshader" id="2_g7rwn"]
+[ext_resource type="Texture2D" uid="uid://4q335xxs2p" path="res://icon.svg" id="3_aaf21"]
+[ext_resource type="Shader" uid="uid://c5sj8lgxsnyvf" path="res://shaders/PuzzleComplete_shader.gdshader" id="4_aaf21"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_g7rwn"]
+frequency = 0.034
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_aaf21"]
+noise = SubResource("FastNoiseLite_g7rwn")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_wnrvm"]
+noise_type = 2
+frequency = 0.0894
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_krcbg"]
+noise = SubResource("FastNoiseLite_wnrvm")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wnrvm"]
+shader = ExtResource("2_g7rwn")
+shader_parameter/noise_tex1 = SubResource("NoiseTexture2D_aaf21")
+shader_parameter/noise_tex2 = SubResource("NoiseTexture2D_krcbg")
+shader_parameter/offset1 = Vector2(0.1, 0.1)
+shader_parameter/offset2 = Vector2(0.2, 0.2)
+shader_parameter/distortion_strength = 0.1
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_krcbg"]
+shader = ExtResource("4_aaf21")
+shader_parameter/alpha = 0.0
+
+[node name="SanityController" type="Node" unique_id=23279608]
+script = ExtResource("1_yekc6")
+
+[node name="Distortion" type="Sprite2D" parent="." unique_id=1299583699]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_wnrvm")
+position = Vector2(610.5, 334.5)
+scale = Vector2(10.5390625, 6.2265625)
+texture = ExtResource("3_aaf21")
+
+[node name="PuzzleComplete" type="Sprite2D" parent="." unique_id=121053149]
+unique_name_in_owner = true
+visible = false
+material = SubResource("ShaderMaterial_krcbg")
+position = Vector2(606, 332.5)
+scale = Vector2(10.46875, 6.1953125)
+texture = ExtResource("3_aaf21")

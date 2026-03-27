@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://bkl7eckvudc7v"]
+
+[ext_resource type="Texture2D" uid="uid://b0kuf327f6vue" path="res://assets/textures/kenney_prototype-textures/PNG/Orange/texture_01.png" id="1_uw3m6"]
+[ext_resource type="PackedScene" uid="uid://cb2se412ck367" path="res://scenes/interaction/interaction_component.tscn" id="2_xm0wp"]
+[ext_resource type="AudioStream" uid="uid://bvbk4xjx711wx" path="res://assets/sounds/DoorCreak.ogg" id="3_aji8h"]
+[ext_resource type="AudioStream" uid="uid://dcxprooa8cia3" path="res://assets/sounds/DoorClose2.ogg" id="4_aji8h"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aji8h"]
+albedo_texture = ExtResource("1_uw3m6")
+uv1_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_w0irj"]
+material = SubResource("StandardMaterial3D_aji8h")
+size = Vector3(1.6, 2.6, 0.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vedx6"]
+size = Vector3(1.6, 2.6, 0.1)
+
+[node name="Door" type="Node3D" unique_id=816456221]
+
+[node name="PivotPoint" type="Node3D" parent="." unique_id=1020091466]
+unique_name_in_owner = true
+
+[node name="Door" type="StaticBody3D" parent="PivotPoint" unique_id=882175035]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="PivotPoint/Door" unique_id=2037155165]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.831, 1.3, 0)
+mesh = SubResource("BoxMesh_w0irj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PivotPoint/Door" unique_id=960205197]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 1.3, 0)
+shape = SubResource("BoxShape3D_vedx6")
+
+[node name="Label3D" type="Label3D" parent="PivotPoint/Door" unique_id=2143992807]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.80332756, 2.3349276, 0.050679743)
+text = "FRONT"
+
+[node name="Label3D2" type="Label3D" parent="PivotPoint/Door" unique_id=1413949811]
+transform = Transform3D(-0.99974847, 0, -0.022425532, 0, 1, 0, 0.022425532, 0, -0.99974847, 0.84613794, 2.3610754, -0.056)
+text = "BACK"
+
+[node name="InteractionComponent" parent="PivotPoint/Door" unique_id=699439601 node_paths=PackedStringArray("object_ref", "pivot_point") instance=ExtResource("2_xm0wp")]
+object_ref = NodePath("..")
+interaction_type = 1
+maximum_rotation = 180.0
+pivot_point = NodePath("../..")
+primary_sfx = ExtResource("3_aji8h")
+secondary_sfx = ExtResource("4_aji8h")

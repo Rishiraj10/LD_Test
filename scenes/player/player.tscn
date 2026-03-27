@@ -1,0 +1,222 @@
+[gd_scene format=3 uid="uid://cm4iqrgtvfamk"]
+
+[ext_resource type="Script" uid="uid://xpnql1ghpsyj" path="res://scripts/player/player.gd" id="1_8afob"]
+[ext_resource type="PackedScene" uid="uid://dd4mjjssu1tih" path="res://scenes/interaction/interaction_controller.tscn" id="2_dovo2"]
+[ext_resource type="Texture2D" uid="uid://dgh3ul6rjlkgi" path="res://assets/reticles/white_reticle.png" id="2_gmlin"]
+[ext_resource type="Texture2D" uid="uid://d1jemmogcuxvf" path="res://assets/reticles/tile_0155.png" id="3_p47bc"]
+[ext_resource type="Texture2D" uid="uid://bgj2lgeergj4y" path="res://assets/reticles/tile_0156.png" id="4_75vfm"]
+[ext_resource type="Shader" uid="uid://wnkmb2k2ahnl" path="res://shaders/node_fade.gdshader" id="5_0owmy"]
+[ext_resource type="PackedScene" uid="uid://c8l2kqlxgueyi" path="res://scenes/sanity_controller.tscn" id="6_75vfm"]
+[ext_resource type="AudioStream" uid="uid://balac254rkql0" path="res://assets/sounds/footstep05.ogg" id="8_qek5x"]
+[ext_resource type="AudioStream" uid="uid://b6cflqkbf4htm" path="res://assets/sounds/jump.ogg" id="9_5gtgg"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qek5x"]
+shader = ExtResource("5_0owmy")
+shader_parameter/rect_width_px = 640.0
+shader_parameter/fade_width_px = 240.0
+shader_parameter/fade_strength = 0.70000003325
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8afob"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dovo2"]
+height = 1.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_p47bc"]
+radius = 2.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_p47bc"]
+radius = 0.3
+height = 0.6
+radial_segments = 4
+rings = 1
+
+[node name="Player" type="CharacterBody3D" unique_id=670874511]
+script = ExtResource("1_8afob")
+
+[node name="GUI" type="Node" parent="." unique_id=399814289]
+
+[node name="ReticleLayer" type="CanvasLayer" parent="GUI" unique_id=292314905]
+
+[node name="Control" type="Control" parent="GUI" unique_id=962313608]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="DefaultReticle" type="TextureRect" parent="GUI/Control" unique_id=1269037349]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("2_gmlin")
+stretch_mode = 3
+
+[node name="HighlightReticle" type="TextureRect" parent="GUI/Control" unique_id=1597009158]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("3_p47bc")
+stretch_mode = 3
+
+[node name="InteractingReticle" type="TextureRect" parent="GUI/Control" unique_id=1622765286]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("4_75vfm")
+stretch_mode = 3
+
+[node name="Debug" type="Label" parent="GUI/Control" unique_id=316108049]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="GUI" unique_id=1771394595]
+
+[node name="NoteOverlay" type="Control" parent="GUI/CanvasLayer" unique_id=1619225709]
+unique_name_in_owner = true
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BlackOverlay" type="ColorRect" parent="GUI/CanvasLayer/NoteOverlay" unique_id=1237574136]
+material = SubResource("ShaderMaterial_qek5x")
+layout_mode = 0
+offset_left = 640.0
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0.022979883, 0.022979883, 0.022979883, 1)
+
+[node name="Control" type="Control" parent="GUI/CanvasLayer/NoteOverlay" unique_id=476626594]
+anchors_preset = 0
+offset_left = 760.0
+offset_top = 10.0
+offset_right = 1260.0
+offset_bottom = 710.0
+
+[node name="NoteContent" type="RichTextLabel" parent="GUI/CanvasLayer/NoteOverlay/Control" unique_id=658987541]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -11.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "dksuhffkdjghkdj,gdhkgjdhgkdjgndkj,ghndkgd"
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StandingCollisionShape3D" type="CollisionShape3D" parent="." unique_id=1403187473]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_8afob")
+debug_color = Color(0.89411765, 1, 0, 1)
+
+[node name="CrouchingCollisionShape3D" type="CollisionShape3D" parent="." unique_id=1630184707]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("CapsuleShape3D_dovo2")
+debug_color = Color(1, 0.6, 0.69803923, 1)
+
+[node name="Head" type="Node3D" parent="." unique_id=1924409580]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+
+[node name="Eyes" type="Node3D" parent="Head" unique_id=1153894197]
+
+[node name="Camera3D" type="Camera3D" parent="Head/Eyes" unique_id=2004212311]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0748682, 0)
+cull_mask = 524285
+fov = 90.0
+
+[node name="InteractionRayCast3D" type="RayCast3D" parent="Head/Eyes/Camera3D" unique_id=27740415]
+unique_name_in_owner = true
+target_position = Vector3(0, 0, -2)
+
+[node name="Hand" type="Marker3D" parent="Head/Eyes/Camera3D" unique_id=1541596149]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="RemoteTransform3D" type="RemoteTransform3D" parent="Head/Eyes/Camera3D" unique_id=499799468]
+remote_path = NodePath("../../SubViewportContainer/SubViewport/NoteCamera")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Head/Eyes" unique_id=1365049406]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Head/Eyes/SubViewportContainer" unique_id=645246231]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1280, 720)
+render_target_update_mode = 4
+
+[node name="NoteCamera" type="Camera3D" parent="Head/Eyes/SubViewportContainer/SubViewport" unique_id=2110720105]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8748682, 0)
+cull_mask = 2
+fov = 90.0
+
+[node name="NoteHand" type="Marker3D" parent="Head/Eyes/SubViewportContainer/SubViewport/NoteCamera" unique_id=924340145]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.83849937, -0.38590932, -0.84206223)
+
+[node name="StandupCheck" type="RayCast3D" parent="." unique_id=468945175]
+target_position = Vector3(0, 2, 0)
+
+[node name="InteractionController" parent="." unique_id=897596366 instance=ExtResource("2_dovo2")]
+unique_name_in_owner = true
+
+[node name="InteractableCheck" type="Area3D" parent="." unique_id=34535317]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractableCheck" unique_id=170483068]
+shape = SubResource("SphereShape3D_p47bc")
+
+[node name="SubViewport" type="SubViewport" parent="." unique_id=615413670]
+unique_name_in_owner = true
+handle_input_locally = false
+size = Vector2i(16, 16)
+render_target_update_mode = 4
+
+[node name="LightDetection" type="Node3D" parent="SubViewport" unique_id=1200454379]
+unique_name_in_owner = true
+
+[node name="LightCamera" type="Camera3D" parent="SubViewport/LightDetection" unique_id=1694476968]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 1.8, 0)
+fov = 20.0
+far = 1.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport/LightDetection" unique_id=411436306]
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, 0, 0.85, 0)
+layers = 524288
+mesh = SubResource("SphereMesh_p47bc")
+
+[node name="SanityController" parent="." unique_id=23279608 instance=ExtResource("6_75vfm")]
+unique_name_in_owner = true
+
+[node name="Audio" type="Node3D" parent="." unique_id=1153902989]
+
+[node name="Footsteps" type="AudioStreamPlayer3D" parent="Audio" unique_id=1265900637]
+unique_name_in_owner = true
+stream = ExtResource("8_qek5x")
+volume_db = -20.0
+
+[node name="Jump" type="AudioStreamPlayer3D" parent="Audio" unique_id=352143643]
+unique_name_in_owner = true
+stream = ExtResource("9_5gtgg")
+volume_db = -20.0

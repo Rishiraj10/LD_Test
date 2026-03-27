@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://dnatqj4ah6ogh"]
+
+[ext_resource type="Texture2D" uid="uid://bkg2fl1i05h57" path="res://assets/notes/story.png" id="1_sj5b3"]
+[ext_resource type="PackedScene" uid="uid://cb2se412ck367" path="res://scenes/interaction/interaction_component.tscn" id="2_ellct"]
+[ext_resource type="AudioStream" uid="uid://bwdix3aa54how" path="res://assets/sounds/drawKnife2.ogg" id="3_7qxw2"]
+[ext_resource type="AudioStream" uid="uid://cspfankmeykor" path="res://assets/sounds/drawKnife3.ogg" id="4_miars"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_7qxw2"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_miars"]
+transparency = 1
+albedo_texture = ExtResource("1_sj5b3")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_klm0r"]
+size = Vector3(2.25, 0.3, 3.1)
+
+[node name="StoryNote" type="StaticBody3D" unique_id=717968558]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1867018129]
+transform = Transform3D(1.112, 0, 0, 0, 1, 0, 0, 0, 1.536, 0, 0, 0)
+mesh = SubResource("PlaneMesh_7qxw2")
+surface_material_override/0 = SubResource("StandardMaterial3D_miars")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=823491822]
+shape = SubResource("BoxShape3D_klm0r")
+
+[node name="InteractionComponent" parent="." unique_id=699439601 node_paths=PackedStringArray("object_ref") instance=ExtResource("2_ellct")]
+object_ref = NodePath("..")
+interaction_type = 5
+content = "SCP-101 appears as a satchel or bag of intermittent size, with observations ranging from an opening of fifteen (15) centimeters in diameter, to seventy (70) centimeters in diameter. The depth of the container has varied with no standard mean of equality to the relative diameter.The primary feature of SCP-101 is what appears to be a semi-humanoid mouth contained within the opening of the bag, with a mean standard of thirty one (31) centimeters of depth into the container, without more than two (2) standard deviations of variance regardless of the apparent external depth of the container. The mouth consists of thirty-two (32) teeth of an off-white hue, all of equal shape and size consisting solely of incisors of approximately ten (10) centimeters in length. It has been observed, albeit not measured with accuracy, that within the mouth there is a tongue of indeterminate length, with observations ranging from fifty (50) centimeters to three point five (3.5) meters.The mouth appears wet and spongy; however, all attempts at removal of possible fluids have resulted in failure with damage to the instruments and harm to the personnel. The current decision is that SCP-101 may be a part of a larger entity of extra-dimensional origin. SCP-101 is not externally mobile; however, internal movements within the container can effect minor movements of the exterior of the container that consists of SCP-101's covering.It is understood that due to the nature of the size improbabilities of the container and object within, the object is of extra-dimensional interaction if not origin."
+primary_sfx = ExtResource("3_7qxw2")
+secondary_sfx = ExtResource("4_miars")

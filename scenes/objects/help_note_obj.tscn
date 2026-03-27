@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://dxr8eo4w0i1hj"]
+
+[ext_resource type="PackedScene" uid="uid://cb2se412ck367" path="res://scenes/interaction/interaction_component.tscn" id="1_mutrp"]
+[ext_resource type="AudioStream" uid="uid://bwdix3aa54how" path="res://assets/sounds/drawKnife2.ogg" id="2_7cbn5"]
+[ext_resource type="AudioStream" uid="uid://cspfankmeykor" path="res://assets/sounds/drawKnife3.ogg" id="3_mq1yf"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_jig04"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_mt2i1"]
+load_path = "res://.godot/imported/help.png-596bbb6e0c64fedffa3026007749031e.s3tc.ctex"
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h7cn1"]
+transparency = 1
+albedo_texture = SubResource("CompressedTexture2D_mt2i1")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fbe8n"]
+size = Vector3(2.25, 0.3, 3.1)
+
+[node name="HelpNote" type="StaticBody3D" unique_id=424664612]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=901973777]
+transform = Transform3D(1.112, 0, 0, 0, 1, 0, 0, 0, 1.536, 0.07025552, -0.055312157, 0.11864495)
+mesh = SubResource("PlaneMesh_jig04")
+surface_material_override/0 = SubResource("StandardMaterial3D_h7cn1")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=503949668]
+shape = SubResource("BoxShape3D_fbe8n")
+
+[node name="InteractionComponent" parent="." unique_id=699439601 node_paths=PackedStringArray("object_ref") instance=ExtResource("1_mutrp")]
+object_ref = NodePath("..")
+interaction_type = 5
+content = "101 is currently stored in the sub-basement 0-2 of Site-19, inside of a standard fireproof document lockbox, within a reinforced concrete room of standard facility size. Said room has been fitted externally with a standard double-door airlock, and internally fitted with appropriate safety response equipment as well as biological response equipment.Only personnel of Level 3 are permitted to enter the SCP-101 holding room; personnel of Level 2 or lower are permitted to interact with SCP-101 only with directives from Level 3 or higher personnel, or with standing directives. The airlock for SCP-101 is set to a standard ten (10) minute cycle, during which standard screening scans for biological or environmental hazards will be made. SCP-101 is under standing directives for use during 0600 and 2000 hours. Outside of the airlock of the holding room for SCP-101, two (2) Level 2 guards are to be posted at all times, with overlapping shifts."
+primary_sfx = ExtResource("2_7cbn5")
+secondary_sfx = ExtResource("3_mq1yf")

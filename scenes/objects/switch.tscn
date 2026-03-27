@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://0ggm7v3rphgt"]
+
+[ext_resource type="PackedScene" uid="uid://cb2se412ck367" path="res://scenes/interaction/interaction_component.tscn" id="1_j58ic"]
+[ext_resource type="AudioStream" uid="uid://d2cs8q0fvfc47" path="res://assets/sounds/lever_pull.ogg" id="2_bxjfm"]
+[ext_resource type="AudioStream" uid="uid://dl50afq2unc1h" path="res://assets/sounds/lever_snap.ogg" id="3_n6htd"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_xsv1j"]
+size = Vector3(0.1, 0.75, 0.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_j58ic"]
+size = Vector3(0.1, 0.75, 0.1)
+
+[node name="Switch" type="Node3D" unique_id=1368481307]
+
+[node name="Switch" type="StaticBody3D" parent="." unique_id=1541468137]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Switch" unique_id=409520718]
+mesh = SubResource("BoxMesh_xsv1j")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Switch" unique_id=1839963685]
+shape = SubResource("BoxShape3D_j58ic")
+
+[node name="InteractionComponent" parent="Switch" unique_id=699439601 node_paths=PackedStringArray("object_ref") instance=ExtResource("1_j58ic")]
+object_ref = NodePath("..")
+interaction_type = 2
+primary_sfx = ExtResource("2_bxjfm")
+secondary_sfx = ExtResource("3_n6htd")

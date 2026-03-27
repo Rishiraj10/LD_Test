@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://jcxrifodykyd"]
+
+[ext_resource type="PackedScene" uid="uid://cb2se412ck367" path="res://scenes/interaction/interaction_component.tscn" id="1_i56hr"]
+[ext_resource type="AudioStream" uid="uid://dkfquhn7txsbi" path="res://assets/sounds/handleCoins2.ogg" id="2_fdbmw"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fdbmw"]
+albedo_color = Color(0.46929657, 0.46929651, 0.46929651, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_y7xvm"]
+material = SubResource("StandardMaterial3D_fdbmw")
+top_radius = 0.1
+bottom_radius = 0.1
+height = 0.3
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_flvvl"]
+height = 0.3
+radius = 0.1
+
+[node name="Item" type="RigidBody3D" unique_id=502996321]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=166083394]
+mesh = SubResource("CylinderMesh_y7xvm")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2054140248]
+shape = SubResource("CylinderShape3D_flvvl")
+
+[node name="InteractionComponent" parent="." unique_id=699439601 node_paths=PackedStringArray("object_ref") instance=ExtResource("1_i56hr")]
+object_ref = NodePath("..")
+interaction_type = 4
+primary_sfx = ExtResource("2_fdbmw")
