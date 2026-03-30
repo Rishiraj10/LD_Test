@@ -1,9 +1,11 @@
 [gd_scene format=3 uid="uid://jcxrifodykyd"]
 
 [ext_resource type="PackedScene" uid="uid://cb2se412ck367" path="res://scenes/interaction/interaction_component.tscn" id="1_i56hr"]
+[ext_resource type="Material" uid="uid://cgbptxfl2qnfs" path="res://material/item_highlighter_material.tres" id="1_y7xvm"]
 [ext_resource type="AudioStream" uid="uid://dkfquhn7txsbi" path="res://assets/sounds/handleCoins2.ogg" id="2_fdbmw"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fdbmw"]
+next_pass = ExtResource("1_y7xvm")
 albedo_color = Color(0.46929657, 0.46929651, 0.46929651, 1)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_y7xvm"]

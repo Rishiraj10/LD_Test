@@ -15,7 +15,7 @@ extends Node
 
 @onready var interactable_check: Area3D = $"../InteractableCheck"
 
-@onready var outline_material: Material = preload("res://material/outline_material.tres")
+@onready var outline_material: Material = preload("res://material/item_highlighter_material.tres")
 
 
 var current_object: Object # Object we are currently interacting with ,and we dont know yet that it is rigidbody or staticbody or some other kind of physics bodyy
@@ -71,7 +71,13 @@ func _process(delta: float) -> void:
 		var potential_object: Object = interaction_ray_cast_3d.get_collider()
 		
 		if potential_object and potential_object is Node:
-			interaction_component = potential_object.get_node_or_null("InteractionComponent")
+			var node: Node = potential_object
+			interaction_component = null
+			while node:
+				interaction_component = node.get_node_or_null("InteractionComponent")
+				if interaction_component:
+					break
+				node = node.get_parent()
 			if interaction_component:
 				if interaction_component.can_interact == false:
 					return
@@ -80,7 +86,7 @@ func _process(delta: float) -> void:
 				_focus()
 				if Input.is_action_just_pressed("primary"):
 					current_object = potential_object
-					interaction_component.preInteract(hand)
+					interaction_component.preInteract(hand, current_object)
 					
 					
 					if interaction_component.interaction_type == interaction_component.InteractionType.ITEM:

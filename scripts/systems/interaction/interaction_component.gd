@@ -9,7 +9,8 @@ enum InteractionType {
 	SWITCH,
 	WHEEL,
 	ITEM,
-	NOTE
+	NOTE,
+	KEYPAD
 }
 
 @export var object_ref: Node3D
@@ -41,6 +42,9 @@ var shut_snap_range: float = 0.05
 var creak_volume_scale: float = 1000.0
 var door_fade_speed: float = 1.0
 var prev_door_angle: float = 0.0
+@export var is_locked: bool = false
+var was_just_unlocked : bool = false
+
 
 # switch variables
 var switch_target_rotation: float = 0.0
@@ -61,13 +65,23 @@ var wheel_fade_speed: float = 5.0
 var last_wheel_angle: float = 0.0
 var wheel_kickback_triggered: bool = false
 
+# Keypad Variables
+var buttons: Array[StaticBody3D]
+var entered_code: Array[int]
+@export var correct_code: Array[int] = [1,2,3,4,5]
+var max_code_length: int = 5
+var screen_label: Label3D
+var is_button_animating: bool = false
+
 # Sound Effects Variables
 var primary_audio_player: AudioStreamPlayer3D
 var secondary_audio_player: AudioStreamPlayer3D
+var tertiary_audio_player: AudioStreamPlayer3D
 var last_velocity: Vector3 = Vector3.ZERO
 var contact_velocity_threshold: float = 1.0
 @export var primary_sfx: AudioStreamOggVorbis
 @export var secondary_sfx: AudioStreamOggVorbis
+@export var tertiary_sfx: AudioStreamOggVorbis
 
 # Signals
 signal item_collected(item: Node)
@@ -80,6 +94,9 @@ func _ready() -> void:
 	secondary_audio_player = AudioStreamPlayer3D.new()
 	secondary_audio_player.stream = secondary_sfx
 	add_child(secondary_audio_player)
+	tertiary_audio_player = AudioStreamPlayer3D.new()
+	tertiary_audio_player.stream = tertiary_sfx
+	add_child(tertiary_audio_player)
 	
 	match interaction_type:
 		InteractionType.DEFAULT:
@@ -99,10 +116,15 @@ func _ready() -> void:
 			camera = get_tree().get_current_scene().find_child("Camera3D", true, false)
 		InteractionType.NOTE:
 			content = content.replace("\\n", "\\n")
+		InteractionType.KEYPAD:
+			screen_label = get_parent().get_node_or_null("%Screen")
+			for node in get_parent().get_children():
+				if node is StaticBody3D:
+					buttons.append(node)
 	
 
 # Run once, when the player FIRST clicks on an object to interact with
-func preInteract(hand: Marker3D) -> void:
+func preInteract(hand: Marker3D, target: Node = null) -> void:
 	is_interacting = true
 	match  interaction_type:
 		InteractionType.DEFAULT:
@@ -116,6 +138,8 @@ func preInteract(hand: Marker3D) -> void:
 			lock_camera = true
 			previous_mouse_position = get_viewport().get_mouse_position()
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		InteractionType.KEYPAD:
+			_press_button(target)
 		
 	
 
@@ -128,19 +152,43 @@ func _physics_process(delta: float) -> void:
 func _process(delta: float) -> void:
 	match interaction_type:
 		InteractionType.DOOR:
-			if not door_input_active:
-				door_velocity = lerp(door_velocity, 0.0, delta * 4.0)
+			
+			if was_just_unlocked:
+				door_velocity = 0.0
+				door_input_active = false
+				door_angle = starting_rotation
+				pivot_point.rotation.y = starting_rotation
+				was_just_unlocked = false
 				
-			
-			door_angle += door_velocity
-			door_angle = clamp(door_angle, starting_rotation, maximum_rotation)
-			pivot_point.rotation.y = door_angle
-			door_input_active = false
-			
-			if prev_door_angle == door_angle:
-				stop_door_sounds(delta)
 			else:
-				update_door_sounds(delta)
+				if not door_input_active:
+					door_velocity = lerp(door_velocity, 0.0, delta * 4.0)
+					
+				
+				door_angle += door_velocity
+				
+				if is_locked:
+					var lock_wiggle: float = 0.02
+					door_angle = clamp(door_angle, starting_rotation, starting_rotation + lock_wiggle)
+					pivot_point.rotation.y = door_angle
+					
+					var angle_changed := not is_equal_approx(prev_door_angle, door_angle)
+					prev_door_angle = door_angle
+					
+					if door_input_active and tertiary_sfx and not tertiary_audio_player.playing and angle_changed:
+						tertiary_audio_player.play()
+						door_input_active = false
+				else:
+					door_angle = clamp(door_angle, starting_rotation, maximum_rotation)
+					pivot_point.rotation.y = door_angle
+					door_input_active = false
+					
+					if prev_door_angle == door_angle:
+						stop_door_sounds(delta)
+					else:
+						update_door_sounds(delta)
+					
+					
 		InteractionType.SWITCH:
 			if is_interacting:
 				update_switch_sounds(delta)
@@ -220,6 +268,7 @@ func postInteract() -> void:
 	is_interacting = false
 	lock_camera = false
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	
 	
 	match interaction_type:
 		InteractionType.DOOR:
@@ -463,6 +512,86 @@ func stop_wheel_sounds(delta: float) -> void:
 		# Stop completely once inaudible
 		if new_vol < 0.001:
 			primary_audio_player.stop()
+	
+	
+func _press_button(target: Node) -> void:
+	if target == null:
+		return
+		
+	if target in buttons:
+		if is_button_animating:
+			return  # block spam
+		
+		is_button_animating = true
+		
+		var tween := create_tween()
+		
+		var start_pos: Vector3 = target.position
+		var pressed_pos: Vector3 = start_pos + Vector3(0, 0, 0.02)
+		
+		tween.tween_property(target, "position", pressed_pos, 0.05)
+		tween.tween_property(target, "position", start_pos, 0.05)
+		
+		tween.finished.connect(func():
+			is_button_animating = false
+		)
+		
+	if primary_sfx:
+		primary_audio_player.play()
+	
+	match target.name:
+		"sbc":
+			entered_code.clear()
+			screen_label.text = "-----"
+			screen_label.modulate = Color.WHITE
+		"sbok":
+			if entered_code == correct_code:
+				screen_label.text = "ENTER"
+				screen_label.modulate = Color.GREEN
+				secondary_audio_player.play()
+				# unlock
+				for node in nodes_to_effect:
+					if node and node.has_method("unlock"):
+						node.call("unlock")
+			else:
+				screen_label.text = "ERROR"
+				screen_label.modulate = Color.RED
+				tertiary_audio_player.play()
+				
+			entered_code.clear()
+		_:
+			var num = str(target.name).substr(2).to_int()
+			if entered_code.size() < max_code_length:
+				entered_code.append(num)
+				var text: String = ""
+				for n in entered_code:
+					text += str(n)
+				screen_label.text = text
+				screen_label.modulate = Color.WHITE
+			else:
+				print("Code is Full")
+	
+	
+func unlock() -> void:
+	is_locked = false
+	was_just_unlocked = true
+	
+	match interaction_type:
+		InteractionType.DOOR:
+			door_velocity = 0.0
+			door_input_active = false
+			door_angle = starting_rotation
+			pivot_point.rotation.y = starting_rotation
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
